@@ -1,113 +1,103 @@
-import Image from "next/image";
+"use client";
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 export default function Home() {
+  const handleClick = () =>{
+    console.log("clicked")
+  }
+  
+  // Connect using a MongoClient instance
+  const MongoClient = require('mongodb').MongoClient;
+   const test = require('assert');
+   // Connection url
+   const url = 'mongodb://localhost:27017/';
+   // Database Name
+   const dbName = 'stock-exchange';
+   // Connect using MongoClient
+   const mongoClient = new MongoClient(url);
+   mongoClient.connect(function(err:any, client:any) {
+     const db = client.db(dbName);
+     console.log('db is: ',db)
+     client.close();
+   });
+  const myStocks = async () => {
+    let stocks = await fetch(new Request("https://api.livecoinwatch.com/coins/list"), {
+            method: "POST",
+            headers: new Headers({
+                "content-type": "application/json",
+                "x-api-key": "44062b59-9a21-488a-9af5-89968dea428a",
+            }),
+            body: JSON.stringify({
+              "currency": "USD",
+              "sort": "rank",
+              "order": "ascending",
+              "offset": 0,
+              "limit": 5,
+              "meta": true
+            }),
+            });
+        let allStocks = await stocks.json();
+        console.log('stocks',allStocks)
+        localStorage.setItem('stocks', JSON.stringify(allStocks))
+        return {
+            props: { allStocks },
+        };  
+    };
+    myStocks();
+    var stocksList = JSON.parse(localStorage.getItem('stocks') || '[]');
+    console.log('ss',stocksList)
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">src/app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:size-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+    <>
+      <div className='container mt-4'>
+        <div className='row'>
+              <div className='col-6'>
+                  <h3>List of Stocks</h3>
+              </div>
+              <div className='col-6'>
+                  <button onClick={handleClick} className='btn btn-info float-right text-white text-bold'>Fetch</button>
+              </div>
         </div>
-      </div>
-
-      <div className="relative z-[-1] flex place-items-center before:absolute before:h-[300px] before:w-full before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 sm:before:w-[480px] sm:after:w-[240px] before:lg:h-[360px]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className="mb-32 grid text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Docs{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Learn{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Templates{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Explore starter templates for Next.js.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Deploy{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-balance text-sm opacity-50">
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+        <div className='row mt-4'>
+              <table className='table table-bordered table-striped table-hover'>
+                  <thead className='bg-info text-white'>
+                    <th>#</th>
+                    <th>Coin</th>
+                    <th>Price</th>
+                    <th>Market Cap</th>
+                    <th>Volume 24H</th>
+                    <th>Liquidity ±2%</th>
+                    <th>All-time High</th>                   
+                    <th>1h</th>
+                    <th>24h</th>
+                  </thead>
+                  <tbody>
+                  {Object.keys(stocksList).map((k, i) => {
+            let data = stocksList[k];
+            let capLength = Number(data.cap).toString().length;
+            console.log('capLength',capLength)
+            let capData = capLength >= 12 ? Number(data.cap/Math.pow(10,capLength-2)).toFixed(2)+' T': Number(data.cap/Math.pow(10,capLength-3)).toFixed(2) +' B';
+            
+            let volumeLength = Number(data.volume).toString().length;
+            let volume = volumeLength >= 10 ? Number(data.volume/Math.pow(10,volumeLength-2)).toFixed(2)+' B': Number(data.volume/Math.pow(10,volumeLength-3)).toFixed(2) +' M';
+            console.log('dd',data)
+            return (
+              <tr key={i}>
+                <td><span className="ft-heart heart-icon"></span>{data.rank}</td>
+                <td><img className="bordered-img" src={data.png32} width="30" height="30"/> <span>{data.name}</span></td>
+                <td>${data.rate.toFixed(2)}</td>
+                <td>${capData}</td>                
+                <td>${volume}</td>
+                <td>${data.cap}</td>
+                <td>${data.allTimeHighUSD}</td>
+                <td>{data.delta.hour }%</td>
+                <td>{data.delta.year }%</td>
+              </tr>
+            );
+          })}
+                  </tbody>
+              </table>
+        </div>
+        </div>
+    </>
   );
 }
