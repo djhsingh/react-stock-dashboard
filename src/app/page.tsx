@@ -6,20 +6,7 @@ export default function Home() {
     console.log("clicked")
   }
   
-  // Connect using a MongoClient instance
-  const MongoClient = require('mongodb').MongoClient;
-   const test = require('assert');
-   // Connection url
-   const url = 'mongodb://localhost:27017/';
-   // Database Name
-   const dbName = 'stock-exchange';
-   // Connect using MongoClient
-   const mongoClient = new MongoClient(url);
-   mongoClient.connect(function(err:any, client:any) {
-     const db = client.db(dbName);
-     console.log('db is: ',db)
-     client.close();
-   });
+ 
   const myStocks = async () => {
     let stocks = await fetch(new Request("https://api.livecoinwatch.com/coins/list"), {
             method: "POST",
